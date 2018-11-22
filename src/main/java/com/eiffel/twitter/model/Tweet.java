@@ -38,6 +38,7 @@ public class Tweet implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tweets", cascade = CascadeType.ALL)
     private List<Hashtag> hashtags;
 
+    //qdasd-
     public Tweet() {
     }
 }
