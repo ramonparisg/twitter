@@ -1,6 +1,8 @@
 package com.eiffel.twitter.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,18 +18,26 @@ public class User implements Serializable {
     @Column(name = "user_id")
     private long id;
 
-    private String username,name,lastName,email,pass;
+    private String username,name,lastName;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(nullable = true)
+    @JsonProperty(access =  JsonProperty.Access.READ_ONLY)
+    private long followersCount, followingCount, notCount, tweetCount;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String pass;
 
     private Date creationDate;
 
     private boolean privateUser;
 
     //Follow
-    @JsonIgnore
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followers;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followings;
 
@@ -41,15 +51,18 @@ public class User implements Serializable {
     private List<Favourite> favourites;
 
     //Tweets
+    @JsonProperty( access = JsonProperty.Access.READ_ONLY)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Tweet> tweets;
 
 
     //Retweet
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Retweet> retweets;
 
 
     public User() {
     }
+
 }

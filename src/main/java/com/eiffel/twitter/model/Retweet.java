@@ -1,6 +1,8 @@
 package com.eiffel.twitter.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,10 +21,12 @@ public class Retweet implements Serializable {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "tweet_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Tweet tweet;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "user_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 
     public Retweet() {

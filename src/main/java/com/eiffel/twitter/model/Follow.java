@@ -1,5 +1,6 @@
 package com.eiffel.twitter.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,10 +19,12 @@ public class Follow implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "follower", referencedColumnName = "user_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User follower;
 
     @ManyToOne
     @JoinColumn(name = "following", referencedColumnName = "user_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User following;
 
     public Follow() {

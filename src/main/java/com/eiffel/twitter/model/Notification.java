@@ -1,5 +1,6 @@
 package com.eiffel.twitter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class Notification implements Serializable {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "user_id")
+    @JsonIgnore
     private User user;
 
     public Notification() {
