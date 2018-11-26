@@ -3,6 +3,8 @@ package com.eiffel.twitter.controller;
 import com.eiffel.twitter.dao.UserDao;
 import com.eiffel.twitter.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
+
 public class UserController {
     @Autowired
     UserDao userDao;
@@ -20,28 +23,23 @@ public class UserController {
         return "Hola";
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/@{username}")
     public ResponseEntity<?> profile(@PathVariable("username") String username){
 
-        if (userDao.existsByUsername(username))
-            return new ResponseEntity<Boolean>(false,HttpStatus.IM_USED);
+        if (!userDao.existsByUsername(username))
+            return new ResponseEntity(false,HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<User>(userDao.findByUsername(username),HttpStatus.OK);
     }
 
-    @GetMapping("/register")
-    public ResponseEntity<?> register(){
-
-
-
-        return new ResponseEntity (userDao.findAll(), HttpStatus.OK);
-    }
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user){
+        try {
+            userDao.save(user);
+        }catch (Exception e){
+            return new ResponseEntity(false, HttpStatus.IM_USED);
+        }
 
-        userDao.save(user);
-
-        return new ResponseEntity<Boolean>(userDao.existsByEmail("Ramon"), HttpStatus.OK);
+        return new ResponseEntity(true, HttpStatus.OK);
     }
 }
