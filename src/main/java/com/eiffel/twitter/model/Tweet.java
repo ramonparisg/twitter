@@ -1,6 +1,8 @@
 package com.eiffel.twitter.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,11 +18,15 @@ public class Tweet implements Serializable {
     @Column(name = "tweet_id")
     private long id;
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd/MM/yyyy")
+    @JsonProperty(access =  JsonProperty.Access.READ_ONLY)
     private Date date;
+
     private String text;
-    private long favQuantity;
-    private long rtQuantity;
-    private long repQuantity;
+
+    @JsonProperty(access =  JsonProperty.Access.READ_ONLY)
+    @Transient //To not create the fields in the DB
+    private long favCount,rtCount,repCount;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "user_id")
@@ -30,13 +36,9 @@ public class Tweet implements Serializable {
     @JsonIgnore
     private List<Favourite> favourites;
 
-
-
     @OneToMany(mappedBy = "tweet", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Retweet> retweets;
-
-
 
     @OneToMany(mappedBy = "baseTweet", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -50,29 +52,18 @@ public class Tweet implements Serializable {
     private List<Hashtag> hashtags;
 
     public Tweet() {
+        this.date = new Date();
     }
 
-    public long getFavQuantity() {
-        return favQuantity;
+    public long getFavCount() {
+        return favourites.size();
     }
 
-    public void setFavQuantity() {
-        this.favQuantity = favourites.size();
+    public long getRtCount() {
+        return retweets.size();
     }
 
-    public long getRtQuantity() {
-        return rtQuantity;
-    }
-
-    public void setRtQuantity() {
-        this.rtQuantity = retweets.size();
-    }
-
-    public long getRepQuantity() {
-        return repQuantity;
-    }
-
-    public void setRepQuantity() {
-        this.repQuantity = replies.size();
+    public long getRepCount() {
+        return replies.size();
     }
 }

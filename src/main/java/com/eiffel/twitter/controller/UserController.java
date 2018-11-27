@@ -39,7 +39,13 @@ public class UserController {
         }catch (Exception e){
             return new ResponseEntity(false, HttpStatus.IM_USED);
         }
-
         return new ResponseEntity(true, HttpStatus.OK);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User u){
+        User logged = userDao.findByEmailAndPass(u.getEmail(),u.getPass());;
+        return new ResponseEntity(logged,logged == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+    }
+
 }
