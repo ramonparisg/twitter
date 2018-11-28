@@ -5,8 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 public interface TweetDao extends JpaRepository<Tweet,Long> {
 
     Page<Tweet> findAllByUserFollowingsFollowerUsername(String username,Pageable pageable);

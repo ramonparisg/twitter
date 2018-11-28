@@ -28,7 +28,7 @@ public class TweetController {
             tweet.setUser(userDao.findByUsername(tweet.getUser().getUsername()));
             Tweet t = tweetDao.save(tweet);
         } catch (Exception e){
-            return new ResponseEntity(false,HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity(false,HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity(true,HttpStatus.OK);
     }
