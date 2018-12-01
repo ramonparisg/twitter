@@ -1,5 +1,6 @@
 package com.eiffel.twitter.dao;
 
+import com.eiffel.twitter.model.Retweet;
 import com.eiffel.twitter.model.Tweet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,11 @@ import java.util.List;
 @Transactional
 public interface TweetDao extends JpaRepository<Tweet,Long> {
 
-    Page<Tweet> findAllByUserFollowingsFollowerUsername(String username,Pageable pageable);
+
+    //Encontrar todos los tweets hecho por el usuario que entre sus seguidores esté yo (el del dashboard)
+    Page<Tweet> findAllByUserFollowingsFollowerUsernameIgnoreCase(String username,Pageable pageable);
+
+
+    //OrRetweetsUserFollowingsFollowerUsername
 
 }

@@ -20,10 +20,13 @@ public class Hashtag implements Serializable {
     @JoinTable(name = "Tweets_has_hashtags", joinColumns = {
             @JoinColumn(referencedColumnName = "hashtag_id", name = "hashtag_id")},
             inverseJoinColumns = { @JoinColumn(referencedColumnName = "tweet_id", name = "tweet_id") })
-
     private List<Tweet> tweets;
 
 
     public Hashtag() {
+    }
+
+    public Hashtag(String text) {
+        this.text = text;
     }
 }

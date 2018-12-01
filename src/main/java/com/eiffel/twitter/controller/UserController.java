@@ -1,8 +1,10 @@
 package com.eiffel.twitter.controller;
 
 import com.eiffel.twitter.dao.FollowDao;
+import com.eiffel.twitter.dao.NotificationDao;
 import com.eiffel.twitter.dao.UserDao;
 import com.eiffel.twitter.model.Follow;
+import com.eiffel.twitter.model.Notification;
 import com.eiffel.twitter.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -23,6 +25,9 @@ public class UserController {
     @Autowired
     FollowDao followDao;
 
+    @Autowired
+    NotificationDao notificationDao;
+
     @GetMapping("/")
     public String hello(){
         return "Hola";
@@ -30,11 +35,8 @@ public class UserController {
 
     @GetMapping("/@{username}")
     public ResponseEntity<?> profile(@PathVariable("username") String username){
-
-        if (!userDao.existsByUsername(username))
-            return new ResponseEntity(false,HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity<User>(userDao.findByUsername(username),HttpStatus.OK);
+        User u = userDao.findByUsernameIgnoreCase(username);
+        return new ResponseEntity<User>(u, u == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
     }
 
     @PostMapping("/register")
@@ -49,20 +51,22 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u){
-        User logged = userDao.findByEmailAndPass(u.getEmail(),u.getPass());;
+        User logged = userDao.findByEmailIgnoreCaseAndPass(u.getEmail(),u.getPass());;
         return new ResponseEntity(logged,logged == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
     }
 
     @GetMapping("/follow")
     public ResponseEntity<?> follow(@RequestParam("follower") String followerUsername, @RequestParam("following") String followingUsername){
-        User follower = userDao.findByUsername(followerUsername);
-        User following = userDao.findByUsername(followingUsername);
+        User follower = userDao.findByUsernameIgnoreCase(followerUsername);
+        User following = userDao.findByUsernameIgnoreCase(followingUsername);
         if (follower == null || following == null)
             return new ResponseEntity(false,HttpStatus.NO_CONTENT);
 
         Follow f  =  new Follow(follower,following);
+        Notification n = new Notification("@"+follower.getUsername() + " is following you",follower,following);
         try {
             followDao.save(f);
+            notificationDao.save(n);
         }catch (Exception e){
             return new ResponseEntity(false,HttpStatus.IM_USED);
         }
@@ -73,7 +77,7 @@ public class UserController {
     @DeleteMapping("/unfollow")
     public ResponseEntity<?> unfollow(@RequestParam("follower") String followerUsername, @RequestParam("following") String followingUsername){
         try {
-            if (followDao.deleteByFollowerUsernameAndFollowingUsername(followerUsername,followingUsername) == 0)
+            if (followDao.deleteByFollowerUsernameIgnoreCaseAndFollowingUsernameIgnoreCase(followerUsername,followingUsername) == 0)
                     return new ResponseEntity(false,HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             return new ResponseEntity(false,HttpStatus.NOT_FOUND);

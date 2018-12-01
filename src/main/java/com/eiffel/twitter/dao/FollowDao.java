@@ -8,5 +8,5 @@ import javax.transaction.Transactional;
 @Transactional
 public interface FollowDao extends JpaRepository<Follow,Long> {
 
-    Long deleteByFollowerUsernameAndFollowingUsername(String followerUsername, String followingUsername);
+    Long deleteByFollowerUsernameIgnoreCaseAndFollowingUsernameIgnoreCase(String followerUsername, String followingUsername);
 }

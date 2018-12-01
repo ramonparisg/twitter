@@ -50,9 +50,13 @@ public class User implements Serializable {
     private List<Follow> followings;
 
     //Notification
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "notificated", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "notificator", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Notification> notificators;
 
     //Favourite
     @JsonIgnore

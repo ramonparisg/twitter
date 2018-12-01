@@ -10,11 +10,11 @@ public interface UserDao extends CrudRepository<User,Long> {
     @Override
     <S extends User> S save(S s);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmailIgnoreCase(String email);
 
-    boolean existsByUsername(String username);
+    boolean existsByUsernameIgnoreCase(String username);
 
-    User findByUsername(String username);
+    User findByUsernameIgnoreCase(String username);
 
-    User findByEmailAndPass(String email, String pass);
+    User findByEmailIgnoreCaseAndPass(String email, String pass);
 }
